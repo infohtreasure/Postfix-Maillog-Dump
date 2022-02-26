@@ -1,0 +1,48 @@
+
+postfix will log error as its happens
+use nano to open  /etc/postfix/master.cf
+edit the following to increase your server logging level -verbose
+
+---
+
+smtp      inet  n       -       n       -       -       smtpd -v
+dnsblog   unix  -       -       n       -       0       dnsblog -v
+qmgr      unix  n       -       n       300     1       qmgr -v
+cleanup   unix  n       -       n       -       0       cleanup -v
+smtp      unix  -       -       n       -       -       smtp -v
+showq     unix  n       -       n       -       -       showq -v
+put -v in from of each line
+
+---
+
+The nature of each problem is indicated as follows:
+
+    "panic" indicates a problem in the software itself that only a programmer can fix. Postfix cannot proceed until this is fixed.
+
+    "fatal" is the result of missing files, incorrect permissions, incorrect configuration file settings that you can fix. Postfix cannot proceed until this is fixed.
+
+    "error" reports an error condition. For safety reasons, a Postfix process will terminate when more than 13 of these happen.
+
+    "warning" indicates a non-fatal error. These are problems that you may not be able to fix (such as a broken DNS server elsewhere on the network) but may also indicate local configuration errors that could become a problem later.
+
+---
+
+Look for obvious signs of trouble
+
+Postfix logs all failed and successful deliveries to a logfile. The file is usually called /var/log/maillog or /var/log/mail; the exact pathname is defined in the /etc/syslog.conf file.
+
+When Postfix does not receive or deliver mail, the first order of business is to look for errors that prevent Postfix from working properly:
+
+    % egrep '(warning|error|fatal|panic):' /some/log/file | more
+
+Note: the most important message is near the BEGINNING of the output. Error messages that come later are less useful.
+
+The nature of each problem is indicated as follows:
+
+    "panic" indicates a problem in the software itself that only a programmer can fix. Postfix cannot proceed until this is fixed.
+
+    "fatal" is the result of missing files, incorrect permissions, incorrect configuration file settings that you can fix. Postfix cannot proceed until this is fixed.
+
+    "error" reports a fatal or non-fatal error condition. Postfix cannot proceed until this is fixed.
+
+    "warning" indicates a non-fatal error. These are problems that you may not be able to fix (such as a broken DNS server elsewhere on the network) but may also indicate local configuration errors that could become a problem later.
